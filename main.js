@@ -3,7 +3,38 @@ const path = require("path");
 const fs = require("fs");
 const os = require("os");
 const { spawn } = require("child_process");
-const ffmpegPath = require("ffmpeg-static");
+
+// Resolve ffmpeg path with fallbacks for packaged app
+let ffmpegPath;
+try {
+  // First try standard require (development)
+  ffmpegPath = require("ffmpeg-static");
+} catch (e) {
+  // Fallback for packaged app - ffmpeg-static might be in resources
+  const possiblePaths = [
+    path.join(app.getAppPath(), "node_modules/ffmpeg-static/bin/ffmpeg.exe"),
+    path.join(app.getAppPath(), "../node_modules/ffmpeg-static/bin/ffmpeg.exe"),
+    path.join(
+      process.resourcesPath,
+      "node_modules/ffmpeg-static/bin/ffmpeg.exe",
+    ),
+  ];
+
+  ffmpegPath = possiblePaths.find((p) => {
+    try {
+      return fs.existsSync(p);
+    } catch {
+      return false;
+    }
+  });
+
+  if (!ffmpegPath) {
+    console.error(
+      "FFmpeg binary not found at any known location",
+      possiblePaths,
+    );
+  }
+}
 
 app.disableHardwareAcceleration();
 app.setAppUserModelId("com.example.imageSequenceToWebP");
@@ -198,6 +229,12 @@ duration ${frameDuration}`,
   );
 
   return new Promise((resolve, reject) => {
+    if (!ffmpegPath) {
+      return reject(
+        new Error("FFmpeg binary not found. Please reinstall the application."),
+      );
+    }
+
     const ffmpeg = spawn(ffmpegPath, args, { windowsHide: true });
 
     ffmpeg.stderr.on("data", (chunk) => {

@@ -11,16 +11,28 @@
   "build": {
     "appId": "com.example.imageSequenceToWebP",
     "productName": "WebP Sequence",
-    "files": ["**/*"],
+    "asar": true,
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**/*",
+      "node_modules/ffmpeg-static/**/*"
+    ],
     "win": {
-      "target": ["nsis"],
+      "target": ["portable", "nsis"],
       "requestedExecutionLevel": "asInvoker"
     },
     "nsis": {
       "oneClick": false,
       "perMachine": false,
       "allowElevation": true,
-      "allowToChangeInstallationDirectory": true
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": null,
+      "uninstallerIcon": null,
+      "installerHeaderIcon": null
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}-portable.exe"
     }
   },
   "dependencies": {
