@@ -13,9 +13,21 @@ A small Electron app that converts image sequences into optimized animated WebP 
 
 ## Install and run
 
-1. Open a terminal in `c:\Users\Di\Documents\TOOLS 2\imageSeqtoWebpAnimation`
-2. Run `npm install`
-3. Run `npm start`
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/dipeshKhadka/webp-sequence-converter.git
+   cd webp-sequence-converter
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the app:
+   ```bash
+   npm start
+   ```
+
+Or download the pre-built installer (`WebP Sequence Setup 0.0.1.exe`) from the Releases page and run it directly.
 
 ## Usage
 
