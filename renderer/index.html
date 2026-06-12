@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Sequence to Animated WebP</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: "Segoe UI", "Segoe UI Variable", "Helvetica Neue", Arial, sans-serif;
+      background: #eef2ff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      color: #0f172a;
+      background: radial-gradient(circle at top left, rgba(99,102,241,0.18), transparent 30%),
+        radial-gradient(circle at top right, rgba(59,130,246,0.14), transparent 22%),
+        radial-gradient(circle at bottom left, rgba(6,182,212,0.12), transparent 24%),
+        #eef2ff;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .window-shell {
+      flex: 1;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      overflow-y: auto;
+    }
+
+    .titlebar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 16px;
+      border-radius: 22px;
+      background: rgba(248,250,252,0.82);
+      border: 1px solid rgba(148,163,184,0.22);
+      backdrop-filter: blur(18px);
+      -webkit-app-region: drag;
+      flex-shrink: 0;
+    }
+
+    .titlebar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .titlebar-left .app-icon {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: #fff;
+      font-size: 18px;
+      -webkit-app-region: no-drag;
+    }
+
+    .titlebar-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      -webkit-app-region: no-drag;
+    }
+
+    .titlebar-actions button {
+      width: 40px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: #0f172a;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      font-size: 13px;
+      padding: 0;
+    }
+
+    .titlebar-actions button:hover {
+      background: rgba(15,23,42,0.07);
+    }
+
+    .titlebar-actions button.close:hover {
+      background: rgba(248,113,113,0.18);
+      color: #b91c1c;
+    }
+
+    .app-shell {
+      width: min(1170px, 100%);
+      margin: 0 auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: -0.03em;
+    }
+
+    .subtitle {
+      color: #475569;
+      margin-top: 6px;
+      font-size: 15px;
+      max-width: 760px;
+      line-height: 1.6;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.95);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 30px 60px rgba(15,23,42,0.08);
+      border: 1px solid rgba(148,163,184,0.16);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      margin-bottom: 18px;
+      font-size: 20px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .field label {
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .field input,
+    .field select,
+    button,
+    .file-button {
+      border: 1px solid rgba(148,163,184,0.32);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 14px;
+      background: #fff;
+      color: #0f172a;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .file-button:focus,
+    button:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+    }
+
+    button,
+    .file-button {
+      cursor: pointer;
+    }
+
+    .file-button {
+      width: fit-content;
+      border-radius: 16px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      border-color: rgba(37,99,235,0.22);
+    }
+
+    button {
+      background: #2563eb;
+      border: none;
+      color: white;
+      border-radius: 16px;
+      padding: 14px 18px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    button:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .log {
+      min-height: 280px;
+      max-height: 340px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 18px;
+      border-radius: 18px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .summary span {
+      background: rgba(59,130,246,0.10);
+      padding: 9px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      color: #0f172a;
+    }
+
+    .input-path {
+      word-break: break-all;
+      color: #334155;
+      margin: 0;
+      font-size: 13px;
+    }
+
+    .input-path.empty {
+      color: #64748b;
+    }
+
+    @media (max-width: 860px) {
+      .row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="window-shell">
+    <div class="titlebar">
+      <div class="titlebar-left">
+        <span class="app-icon">🖼️</span>
+        <span>WebP Animator</span>
+      </div>
+      <div class="titlebar-actions">
+        <button id="minBtn" aria-label="Minimize">━</button>
+        <button id="maxBtn" aria-label="Maximize">☐</button>
+        <button id="closeBtn" class="close" aria-label="Close">✕</button>
+      </div>
+    </div>
+
+    <div class="app-shell">
+      <h1>Image Sequence to Animated WebP</h1>
+      <p class="subtitle">Pick a folder with sequential frames, choose output settings, and export an optimized animated WebP package for Windows 11.</p>
+    <div class="card">
+      <div class="field">
+        <button id="selectFolderBtn">Select Image Sequence Folder</button>
+        <p class="input-path" id="sourcePath">No folder selected</p>
+      </div>
+      <div class="field">
+        <button id="selectOutputBtn">Choose Output WebP File</button>
+        <p class="input-path" id="outputPath">No output file selected</p>
+      </div>
+      <div class="summary" id="fileSummary"></div>
+    </div>
+
+    <div class="card">
+      <h2>Export Settings</h2>
+      <div class="row">
+        <div class="field">
+          <label for="width">Width</label>
+          <input id="width" type="number" min="0" placeholder="Leave empty to preserve original" />
+        </div>
+        <div class="field">
+          <label for="height">Height</label>
+          <input id="height" type="number" min="0" placeholder="Leave empty to preserve original" />
+        </div>
+        <div class="field">
+          <label for="fps">Frame Rate</label>
+          <input id="fps" type="number" min="1" max="120" value="24" />
+        </div>
+        <div class="field">
+          <label for="loop">Loop</label>
+          <select id="loop">
+            <option value="0">Infinite loop</option>
+            <option value="1">Play once</option>
+            <option value="2">Play twice</option>
+            <option value="3">Play three times</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="quality">Quality</label>
+          <input id="quality" type="number" min="0" max="100" value="80" />
+        </div>
+        <div class="field">
+          <label for="effort">Compression Effort</label>
+          <select id="effort">
+            <option value="0">0 - Fast</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4" selected>4 - Balanced</option>
+            <option value="5">5</option>
+            <option value="6">6 - Best size</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="lossless">Lossless</label>
+          <select id="lossless">
+            <option value="false" selected>Lossy (best quality/size)</option>
+            <option value="true">Lossless</option>
+          </select>
+        </div>
+      </div>
+      <button id="convertBtn" disabled>Export Animated WebP</button>
+    </div>
+
+    <div class="card">
+      <h2>Conversion Log</h2>
+      <div class="log" id="logOutput">Ready.</div>
+    </div>
+  </div>
+</div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

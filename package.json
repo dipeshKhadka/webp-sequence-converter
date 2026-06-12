@@ -1,0 +1,33 @@
+{
+  "name": "image-sequence-to-webp",
+  "version": "0.0.1",
+  "author": "WebP Sequence",
+  "description": "Convert image sequences to optimized animated WebP with resolution, frame rate, color, and compression controls.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win --x64"
+  },
+  "build": {
+    "appId": "com.example.imageSequenceToWebP",
+    "productName": "WebP Sequence",
+    "files": ["**/*"],
+    "win": {
+      "target": ["nsis"],
+      "requestedExecutionLevel": "asInvoker"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "dependencies": {
+    "ffmpeg-static": "^5.1.0"
+  },
+  "devDependencies": {
+    "electron": "^29.0.0",
+    "electron-builder": "^24.6.0"
+  }
+}
