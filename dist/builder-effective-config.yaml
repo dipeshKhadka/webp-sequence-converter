@@ -3,11 +3,16 @@ directories:
   buildResources: build
 appId: com.example.imageSequenceToWebP
 productName: WebP Sequence
+asar: true
 files:
   - filter:
-      - '**/*'
+      - main.js
+      - preload.js
+      - renderer/**/*
+      - node_modules/ffmpeg-static/**/*
 win:
   target:
+    - portable
     - nsis
   requestedExecutionLevel: asInvoker
 nsis:
@@ -15,4 +20,9 @@ nsis:
   perMachine: false
   allowElevation: true
   allowToChangeInstallationDirectory: true
+  installerIcon: null
+  uninstallerIcon: null
+  installerHeaderIcon: null
+portable:
+  artifactName: ${productName}-${version}-portable.exe
 electronVersion: 29.4.6
