@@ -4,7 +4,7 @@ A small Electron app that converts image sequences into optimized animated WebP 
 
 ## Download
 
-**[Download WebP Sequence Setup 0.0.1.exe](https://github.com/dipeshKhadka/webp-sequence-converter/releases/download/v0.0.1/WebP-Sequence-Setup-0.0.1.exe)** - Ready to use, no installation needed!
+**[Download WebP Sequence Setup 0.0.1.exe](https://github.com/dipeshKhadka/webp-sequence-converter/releases/download/v0.0.1/WebP%20Sequence%20Setup%200.0.1.exe)** - Ready to use, no installation needed!
 
 ## Features
 
