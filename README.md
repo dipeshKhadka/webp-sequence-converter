@@ -2,6 +2,10 @@
 
 A small Electron app that converts image sequences into optimized animated WebP files.
 
+## Download
+
+**[Download WebP Sequence Setup 0.0.1.exe](https://github.com/dipeshKhadka/webp-sequence-converter/releases/download/v0.0.1/WebP-Sequence-Setup-0.0.1.exe)** - Ready to use, no installation needed!
+
 ## Features
 
 - Select a folder with sequential image files
@@ -12,6 +16,12 @@ A small Electron app that converts image sequences into optimized animated WebP 
 - Export optimized animated WebP
 
 ## Install and run
+
+### Option 1: Download the Executable (Recommended)
+
+Download `WebP Sequence Setup 0.0.1.exe` from [Releases](https://github.com/dipeshKhadka/webp-sequence-converter/releases) and run it directly.
+
+### Option 2: Build from Source
 
 1. Clone the repository:
    ```bash
@@ -26,8 +36,6 @@ A small Electron app that converts image sequences into optimized animated WebP 
    ```bash
    npm start
    ```
-
-Or download the pre-built installer (`WebP Sequence Setup 0.0.1.exe`) from the Releases page and run it directly.
 
 ## Usage
 
