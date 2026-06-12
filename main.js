@@ -4,37 +4,15 @@ const fs = require("fs");
 const os = require("os");
 const { spawn } = require("child_process");
 
-// Resolve ffmpeg path with fallbacks for packaged app
-let ffmpegPath;
-try {
-  // First try standard require (development)
-  ffmpegPath = require("ffmpeg-static");
-} catch (e) {
-  // Fallback for packaged app - ffmpeg-static might be in resources
-  const possiblePaths = [
-    path.join(app.getAppPath(), "node_modules/ffmpeg-static/bin/ffmpeg.exe"),
-    path.join(app.getAppPath(), "../node_modules/ffmpeg-static/bin/ffmpeg.exe"),
-    path.join(
-      process.resourcesPath,
-      "node_modules/ffmpeg-static/bin/ffmpeg.exe",
-    ),
-  ];
-
-  ffmpegPath = possiblePaths.find((p) => {
-    try {
-      return fs.existsSync(p);
-    } catch {
-      return false;
-    }
-  });
-
-  if (!ffmpegPath) {
-    console.error(
-      "FFmpeg binary not found at any known location",
-      possiblePaths,
-    );
+// Resolve ffmpeg path — when packaged, the binary lives in app.asar.unpacked
+// (asarUnpack extracts it there) so we must rewrite the .asar path before spawning.
+const ffmpegPath = (() => {
+  let p = require("ffmpeg-static");
+  if (p && app.isPackaged) {
+    p = p.replace("app.asar", "app.asar.unpacked");
   }
-}
+  return p;
+})();
 
 app.disableHardwareAcceleration();
 app.setAppUserModelId("com.example.imageSequenceToWebP");
